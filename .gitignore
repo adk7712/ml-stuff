@@ -37,3 +37,4 @@ venv/
 
 # Local dev files
 conv.md
+*.png
