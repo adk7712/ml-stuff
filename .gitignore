@@ -38,3 +38,6 @@ venv/
 # Local dev files
 conv.md
 *.png
+
+# System files
+.DS_Store
