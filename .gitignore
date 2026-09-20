@@ -38,6 +38,11 @@ venv/
 # Local dev files
 conv.md
 *.png
+!docs/charts/*.png
+
 
 # System files
 .DS_Store
+
+# Portfolio assets
+assets/
