@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicting Organic Search Decline for Content Refresh Prioritization | ML Research Paper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FAF9F6;
+            --text-color: #111111;
+            --text-muted: #555555;
+            --accent: #2A4B3C;
+            --accent-light: #8A9A86;
+            --border-color: #E5E5E0;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.65;
+            padding: 40px 20px;
+        }
+
+        .paper-container {
+            max-width: 840px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 48px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        header {
+            margin-bottom: 36px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            background: rgba(42, 75, 60, 0.08);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.25;
+            color: var(--text-color);
+            margin-bottom: 12px;
+        }
+
+        .meta {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 36px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        .abstract-box {
+            background: var(--bg-color);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 6px 6px 0;
+            margin: 24px 0 32px 0;
+        }
+
+        .abstract-box h3 {
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .abstract-box p {
+            margin-bottom: 0;
+            font-size: 15px;
+            color: var(--text-color);
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 24px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .figure-container {
+            margin: 28px 0;
+            text-align: center;
+        }
+
+        .figure-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .figure-caption {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .callout-rule {
+            background: rgba(42, 75, 60, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 18px 0;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        a:hover {
+            color: #1a3227;
+        }
+
+        footer {
+            margin-top: 48px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 16px;
+            }
+            .paper-container {
+                padding: 24px 18px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+    <header>
+        <span class="tag">Machine Learning Research Paper · Lane 2: Content Refresh</span>
+        <h1>Predicting Organic Search Decline for Content Refresh Prioritization</h1>
+        <div class="meta">
+            <span>Author: Applied ML Intern</span> &nbsp;·&nbsp;
+            <span>Dataset: FlyRank Search Intelligence Release</span> &nbsp;·&nbsp;
+            <span>Code: <a href="https://github.com/adk7712/ml-stuff" target="_blank">github.com/adk7712/ml-stuff</a></span>
+        </div>
+    </header>
+
+    <!-- 1. Title + Abstract -->
+    <div class="abstract-box">
+        <h3>Abstract</h3>
+        <p>
+            Editorial teams managing large digital publications waste substantial effort trying to guess which older articles need updating to protect organic traffic. In this study, I examine whether trailing 90-day search performance and content metadata can reliably predict which published articles will experience organic search traffic decline over the subsequent month. Using an anonymized dataset of 30,000 pages across 32 clients, I train a Random Forest classifier evaluated under an honest grouped split across completely unseen client websites. The model achieves a Precision@50 of 0.74, markedly beating both the random baseline (0.52) and a heuristic position-staleness rule (0.50). This predictive framework translates into an actionable 4-tier editorial refresh queue that surfaces high-impact decaying articles before ranking collapse occurs.
+        </p>
+    </div>
+
+    <!-- 2. Introduction / Problem -->
+    <section>
+        <h2>1. Introduction &amp; Problem Statement</h2>
+        <p>
+            Published content is not a static asset; search rankings decay over time as competitors publish fresher updates, user intent shifts, and search engine ranking criteria evolve. For publications with thousands of indexed articles, editorial bandwidth is strictly finite: content teams can typically refresh 20 to 50 URLs each week.
+        </p>
+        <p>
+            Currently, most organizations rely on primitive heuristic rules such as <em>"update whatever was published more than 6 months ago"</em> or <em>"refresh articles in positions 4 through 10."</em> As shown in my empirical checks, these simple heuristics suffer from heavy false positive rates (over 50% error), wasting hundreds of editorial hours rewriting healthy content while missing critical decaying pages.
+        </p>
+        <p>
+            This research develops and validates a decision-support pipeline that models the likelihood of organic search decline, giving content managers an honest, prioritized review queue.
+        </p>
+    </section>
+
+    <!-- 3. Data -->
+    <section>
+        <h2>2. Data &amp; Scope</h2>
+        <p>
+            The analysis connects directly to the official <strong>FlyRank Search Intelligence Warehouse Release</strong> hosted on Hugging Face (<code>FlyRank/internship-warehouse</code>, build v20260703, comprising ~79M daily performance records across 17 months). Using DuckDB over native <code>hf://</code> protocols with an authenticated read token, the pipeline queries remote Parquet partitions to audit dimension tables (<code>dim_clients</code>: 104 rows; <code>dim_content</code>: 519,606 rows; March 2026 daily facts: 9,841,378 rows) and models the verified Lane 2 feature table (30,000 published pages across 32 enterprise clients).
+        </p>
+        <p>
+            The unit of analysis is <strong>one published content page for one client, measured over a trailing 90-day observation window</strong>.
+        </p>
+        <ul>
+            <li><strong>Observation Features (Trailing 90 Days):</strong> Search Console impressions (<code>impressions_90d</code>), clicks (<code>clicks_90d</code>), average ranking position (<code>avg_position</code>), content age (<code>content_age_days</code>), days since last update (<code>days_since_last_update</code>), and article length (<code>word_count</code>).</li>
+            <li><strong>Outcome Target (Forward 30 Days):</strong> A binary indicator (<code>is_declining</code>) derived from measured 30-day forward impressions change. In the total sample, 54.21% of pages experienced decline.</li>
+            <li><strong>Exclusions:</strong> Columns derived from the forward performance window (<code>trend_direction</code>, <code>trend_pct</code>) were strictly excluded from the feature set to eliminate target leakage. Client and content identifiers were omitted from the feature matrix to avoid memorizing brand layout specifics.</li>
+        </ul>
+    </section>
+
+    <!-- 4. Methodology -->
+    <section>
+        <h2>3. Methodology</h2>
+        <h3>Unseen Client Validation Design (Grouped Split)</h3>
+        <p>
+            Standard random train/test splits are deeply flawed for multi-client content platforms. Because pages from the same client share domain authority, technical templates, and audience loyalty, a random split allows the model to memorize client-level baselines rather than learning general signals of content decay.
+        </p>
+        <p>
+            To establish an honest real-world evaluation, I implemented a <strong>GroupShuffleSplit on client_id</strong> (75% train, 25% test, <code>random_state=42</code>). The test partition contains 7,115 pages from 8 clients that were completely withheld from training.
+        </p>
+
+        <h3>Baseline Rule Formulation</h3>
+        <p>
+            To ensure the machine learning model earns its place, I benchmark it against a hand-crafted heuristic rule: flagging striking-distance pages (positions 4–10) that have not been updated in over 90 days, ranked by search impressions:
+        </p>
+        <div class="callout-rule">
+            <code>Action Score = (position_tier == 'striking') &times; (days_since_last_update &ge; 90) &times; impressions_90d</code>
+        </div>
+
+        <h3>Model Architectures</h3>
+        <p>
+            I benchmark two models against this rule: a transparent <strong>Logistic Regression</strong> model (with median imputation and standard scaling) and a 100-tree <strong>Random Forest Classifier</strong> (max depth 10) capable of learning non-linear feature interactions between staleness, ranking tier, and traffic volume.
+        </p>
+    </section>
+
+    <!-- 5. Results -->
+    <section>
+        <h2>4. Empirical Results</h2>
+        <p>
+            All models were evaluated on the exact same unseen test clients using Area Under the ROC Curve (ROC-AUC) and top-K precision (Precision@10, Precision@50, and Precision@100).
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Model / Strategy</th>
+                    <th>ROC-AUC</th>
+                    <th>Precision@10</th>
+                    <th>Precision@50</th>
+                    <th>Precision@100</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Base Rate (Random Selection)</td>
+                    <td>0.5000</td>
+                    <td>0.52</td>
+                    <td>0.52</td>
+                    <td>0.52</td>
+                </tr>
+                <tr>
+                    <td>Heuristic Baseline Rule</td>
+                    <td>0.5021</td>
+                    <td>0.30</td>
+                    <td>0.50</td>
+                    <td>0.56</td>
+                </tr>
+                <tr>
+                    <td>Logistic Regression</td>
+                    <td>0.5211</td>
+                    <td>0.50</td>
+                    <td>0.50</td>
+                    <td>0.59</td>
+                </tr>
+                <tr>
+                    <td><strong>Random Forest Classifier</strong></td>
+                    <td><strong>0.5986</strong></td>
+                    <td><strong>0.70</strong></td>
+                    <td><strong>0.74</strong></td>
+                    <td><strong>0.72</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="figure-container">
+            <img src="charts/model_comparison.png" alt="Model Comparison Chart">
+            <div class="figure-caption">Figure 1: Model performance comparison on unseen clients. The Random Forest achieves 74% precision on the top-50 review queue compared to 50% for the baseline rule.</div>
+        </div>
+
+        <div class="figure-container">
+            <img src="charts/roc_curves.png" alt="ROC Curves Comparison">
+            <div class="figure-caption">Figure 2: Receiver Operating Characteristic (ROC) curves across baseline, linear, and ensemble models on unseen test clients.</div>
+        </div>
+
+        <h3>Feature Importance &amp; Interpretability</h3>
+        <p>
+            Inspecting the Random Forest feature importances reveals what drives the model's predictions:
+        </p>
+        <ul>
+            <li><strong>Search Impressions (31.1%):</strong> Scale of search exposure is the dominant signal. High-impression articles have established ranking real estate that search engines actively evaluate.</li>
+            <li><strong>Word Count (17.5%):</strong> In-depth content exhibits significantly different decay rates than short blog snippets.</li>
+            <li><strong>Average Position (13.7%):</strong> Pages hovering in positions 4–10 (striking distance) are substantially more volatile than entrenched top-3 results.</li>
+            <li><strong>Update Recency (9.4%):</strong> Staleness beyond 90 days increases the probability of drop-off.</li>
+        </ul>
+
+        <div class="figure-container">
+            <img src="charts/feature_importance.png" alt="Top Feature Importances">
+            <div class="figure-caption">Figure 3: Relative feature importances from the Random Forest model.</div>
+        </div>
+    </section>
+
+    <!-- 6. Limitations -->
+    <section>
+        <h2>5. Limitations &amp; Honest Framing</h2>
+        <p>
+            To maintain research integrity, several boundaries must be acknowledged:
+        </p>
+        <ol>
+            <li><strong>Observational Correlation, Not Causal Proof:</strong> The model detects patterns that correlate with future traffic decline. It cannot prove that refreshing a specific page will mechanically restore lost impressions, as external forces (e.g. competitor actions or algorithmic core updates) also dictate rankings.</li>
+            <li><strong>Low-Volume Volatility:</strong> For articles with fewer than 50 quarterly impressions, percentage-based decline metrics are erratic: losing 2 clicks is categorized as a 100% collapse. Low-volume pages must be excluded from automated priority queues.</li>
+            <li><strong>Client Scale Imbalance:</strong> Large enterprise sites with thousands of URLs produce different ranking dynamics than smaller niche publications. While grouped validation ensures the model generalizes, threshold calibrations should be adjusted per client.</li>
+            <li><strong>Absence of Full Behavioral Signals:</strong> Because GA4 engagement data was sparse across historical snapshots, this model relies primarily on Google Search Console visibility indicators.</li>
+        </ol>
+    </section>
+
+    <!-- 7. Ranked Recommendations -->
+    <section>
+        <h2>6. Ranked Recommendations (The Action Playbook)</h2>
+        <p>
+            Predictions are translated into a 4-tier operational playbook designed for editorial teams:
+        </p>
+
+        <div class="figure-container">
+            <img src="charts/action_distribution.png" alt="Recommended Action Distribution">
+            <div class="figure-caption">Figure 4: Breakdown of the test queue into operational editorial tiers.</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Action Tier</th>
+                    <th>Criteria</th>
+                    <th>Recommended Editorial Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Priority Refresh</strong></td>
+                    <td>Risk Score &ge; 0.65 &amp; Impressions &ge; 500</td>
+                    <td>Immediate editorial review: refresh outdated statistics, expand under-developed sections, and update title tags.</td>
+                </tr>
+                <tr>
+                    <td><strong>Striking Distance Optimization</strong></td>
+                    <td>Position Tier 'striking' &amp; Risk Score &ge; 0.50</td>
+                    <td>On-page SEO audit: optimize internal anchor text links and refine meta descriptions to push rankings into top 3.</td>
+                </tr>
+                <tr>
+                    <td><strong>Maintain / Do Not Touch</strong></td>
+                    <td>Risk Score &lt; 0.35</td>
+                    <td>Leave alone. Do not consume editorial resources on healthy, self-sustaining articles.</td>
+                </tr>
+                <tr>
+                    <td><strong>Deprioritize</strong></td>
+                    <td>Impressions &lt; 50</td>
+                    <td>Remove from active review queue to avoid chasing statistical noise on low-visibility URLs.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 8. Reproducibility -->
+    <section>
+        <h2>7. Reproducibility</h2>
+        <p>
+            All code, data preparation routines, and evaluation splits are available in the project repository:
+        </p>
+        <ul>
+            <li><strong>Repository:</strong> <a href="https://github.com/adk7712/ml-stuff" target="_blank">github.com/adk7712/ml-stuff</a></li>
+            <li><strong>Capstone Notebook:</strong> <a href="https://github.com/adk7712/ml-stuff/blob/main/work/notebooks/capstone.ipynb" target="_blank">work/notebooks/capstone.ipynb</a></li>
+            <li><strong>Random Seeds:</strong> All data splits and models are fixed with <code>random_state=42</code> for exact numerical reproducibility.</li>
+        </ul>
+    </section>
+
+    <!-- 9. Acknowledgments & Data Credit -->
+    <section>
+        <h2>8. Acknowledgments &amp; Data Credit</h2>
+        <p>
+            This research was conducted as part of the FlyRank Applied ML Internship.
+        </p>
+        <p>
+            <strong>Built on the FlyRank ML Internship dataset</strong>, made available by <a href="https://flyrank.ai" target="_blank" rel="noopener">FlyRank.ai</a>.
+        </p>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Applied Machine Learning Internship · Search Ranking &amp; Discoverability Capstone</p>
+    </footer>
+</div>
+
+</body>
+</html>
